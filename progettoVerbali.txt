@@ -1,0 +1,90 @@
+SELECT COUNT(*) AS ConteggioVerbali
+FROM Verbali
+WHERE DataTrascrizioneVerbale IS NOT NULL;
+
+SELECT Anagrafica.IDanagrafica, Anagrafica.Cognome, Anagrafica.Nome,
+       COUNT(Verbali.IDverbale) AS ConteggioVerbali
+FROM Anagrafica
+LEFT JOIN Verbali ON Anagrafica.IDanagrafica = Verbali.AnagraficaID
+GROUP BY Anagrafica.IDanagrafica, Anagrafica.Cognome, Anagrafica.Nome;
+
+SELECT TipoViolazione.IDViolazione, TipoViolazione.Descrizione AS TipoViolazione,
+       COUNT(Verbali.IDverbale) AS ConteggioVerbali
+FROM TipoViolazione
+LEFT JOIN Verbali ON TipoViolazione.IDViolazione = Verbali.TipoViolazioneID
+GROUP BY TipoViolazione.IDViolazione, TipoViolazione.Descrizione;
+
+SELECT Anagrafica.IDanagrafica, Anagrafica.Cognome, Anagrafica.Nome,
+       SUM(Verbali.DecurtamentoPunti) AS PuntiPersi
+FROM Anagrafica
+LEFT JOIN Verbali ON Anagrafica.IDanagrafica = Verbali.AnagraficaID
+GROUP BY Anagrafica.IDanagrafica, Anagrafica.Cognome, Anagrafica.Nome;
+
+SELECT Anagrafica.Cognome, Anagrafica.Nome, Verbali.DataViolazione, Verbali.IndirizzoViolazione, Verbali.Importo, Verbali.DecurtamentoPunti
+FROM Anagrafica
+JOIN Verbali ON Anagrafica.IDanagrafica = Verbali.AnagraficaID
+WHERE Anagrafica.Città = 'Palermo';
+
+SELECT Anagrafica.Cognome, Anagrafica.Nome, Anagrafica.Indirizzo,
+       Verbali.DataViolazione, Verbali.Importo, Verbali.DecurtamentoPunti
+FROM Anagrafica
+JOIN Verbali ON Anagrafica.IDanagrafica = Verbali.AnagraficaID
+WHERE Verbali.DataViolazione BETWEEN '2009-02-01' AND '2009-07-31';
+
+SELECT Anagrafica.IDanagrafica, Anagrafica.Cognome, Anagrafica.Nome,
+       SUM(Verbali.Importo) AS TotaleMulte
+FROM Anagrafica
+JOIN Verbali ON Anagrafica.IDanagrafica = Verbali.AnagraficaID
+GROUP BY Anagrafica.IDanagrafica, Anagrafica.Cognome, Anagrafica.Nome;
+
+SELECT *
+FROM Anagrafica
+WHERE Città = 'Palermo';
+
+SELECT DataViolazione, Importo, DecurtamentoPunti
+FROM Verbali
+WHERE DataViolazione = '2024-01-10';
+
+SELECT *
+FROM Verbali
+WHERE Nominativo_Agente = 'Agente1';
+
+SELECT Anagrafica.Cognome, Anagrafica.Nome, Anagrafica.Indirizzo,
+       Verbali.DataViolazione, Verbali.Importo, Verbali.DecurtamentoPunti
+FROM Anagrafica
+JOIN Verbali ON Anagrafica.IDanagrafica = Verbali.AnagraficaID
+WHERE Verbali.DecurtamentoPunti >= 5;
+
+SELECT Anagrafica.Cognome, Anagrafica.Nome, Anagrafica.Indirizzo,
+       Verbali.DataViolazione, Verbali.Importo, Verbali.DecurtamentoPunti
+FROM Anagrafica
+JOIN Verbali ON Anagrafica.IDanagrafica = Verbali.AnagraficaID
+WHERE Verbali.Importo >= 100;
+
+CREATE PROCEDURE VerbaliPerAnno
+    @Anno INT
+AS
+BEGIN
+    SELECT *
+    FROM Verbali
+    WHERE YEAR(DataViolazione) = @Anno;
+END;
+
+CREATE PROCEDURE TotaliPuntiData
+    @DataInput DATE
+AS
+BEGIN
+    SELECT SUM(DecurtamentoPunti) AS PuntiDecurtati
+    FROM Verbali
+    WHERE DataViolazione = @DataInput;
+END;
+
+CREATE PROCEDURE EliminaVerbale
+    @IDverbale INT
+AS
+BEGIN
+    DELETE FROM Verbali
+    WHERE IDverbale = @IDverbale;
+END;
+
+
